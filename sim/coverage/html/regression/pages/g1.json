@@ -1,0 +1,7 @@
+var g_data = {
+g1437:[{dummy:0},
+{name:'fifo_cg',f:1,type:1,id:1442,tb:'59',h:'55',m:'4',hp:'93.22%',cov:['93.75%','G'],g:'100.00%',gp:['93.75%','G'],opts:[[],['merge_instance','auto(true)']],parent:'1437'},
+{name:'\\/fifo_pkg::fifo_coverage::fifo_cg ',f:1,type:2,id:1459,tb:'59',h:'55',m:'4',hp:'93.22%',cov:['93.75%','G'],g:'100.00%',gp:['93.75%','G'],opts:[[],['per_instance','true']],cvg:'fifo_cg',parent:'1442'}],
+dummyEnd:0
+};
+processCovergroupsData(g_data);

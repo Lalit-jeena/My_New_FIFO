@@ -1,0 +1,4 @@
+var g_db_data = [
+{dummy:0},
+{name:'fifo_cg',f:1,type:6,id:1442,tb:'59',h:'55',m:'4',hp:'93.22%',cov:['93.75%','G'],g:'100.00%',gp:['93.75%','G'],opts:[[],['merge_instance','auto(true)']],hdlPath:'/fifo_pkg/fifo_coverage',parent:'1437'}];
+processConsCovergroupsData(g_db_data);

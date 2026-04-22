@@ -1,0 +1,13 @@
+../rtl/design/fifo_top.sv
+../tb/agent/read_monitor.sv
+../tb/agent/write_drv.sv
+../tb/env/fifo_coverage.sv
+../tb/env/reference_model.sv
+../tb/env/scoreboard.sv
+../tb/interface/fifo_interface.sv
+../tb/sequence/fifo_generator.sv
+../tb/test/fifo_pkg.sv
+../tb/test/top.sv
+../tb/transaction/fifo_xtn.sv
+C:/questasim64_10.7c/win64/../verilog_src/uvm-1.2/src/base/uvm_traversal.svh
+C:/questasim64_10.7c/win64/../verilog_src/uvm-1.2/src/uvm_pkg.sv

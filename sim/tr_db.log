@@ -1,0 +1,8 @@
+  CREATE_STREAM @0 {NAME:seq T:Transactions SCOPE:uvm_test_top.env_h.agent_h.sequencer_h STREAM:616}
+  CREATE_STREAM @0 {NAME:seq T:Transactions SCOPE:uvm_test_top.env_h.agent_h.sequencer_h STREAM:616}
+  CREATE_STREAM @0 {NAME:seq T:Transactions SCOPE:uvm_test_top.env_h.agent_h.sequencer_h STREAM:616}
+  CREATE_STREAM @0 {NAME:seq T:Transactions SCOPE:uvm_test_top.env_h.agent_h.sequencer_h STREAM:616}
+  CREATE_STREAM @0 {NAME:smoke_seq T:Transactions SCOPE:uvm_test_top.env_h.agent_h.sequencer_h STREAM:634}
+  CREATE_STREAM @140000 {NAME:full_empty_seq T:Transactions SCOPE:uvm_test_top.env_h.agent_h.sequencer_h STREAM:1007}
+  CREATE_STREAM @730000 {NAME:register_seq T:Transactions SCOPE:uvm_test_top.env_h.agent_h.sequencer_h STREAM:2427}
+  CREATE_STREAM @990000 {NAME:random_seq T:Transactions SCOPE:uvm_test_top.env_h.agent_h.sequencer_h STREAM:3055}

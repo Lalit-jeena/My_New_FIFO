@@ -1,0 +1,133 @@
+//======================================================================
+// FIFO with cs + reg_sel - fill_level handled properly
+//======================================================================
+module fifo_top (
+    input         clk,
+    input         rst_n,
+    
+    input         cs,          // Global Enable
+    input         reg_sel,     // 1=Register Mode, 0=FIFO Mode
+    
+    input [7:0]   addr,
+    input [7:0]   data_in,
+    input         wr_enb,
+    input         rd_enb,
+    
+    output        full,
+    output        empty,
+    output        almost_full,
+    output        almost_empty,
+    output        overflow,
+    output        underflow,
+    
+    output reg [7:0] data_out,
+    output reg [7:0] reg_rdata
+);
+
+    reg [7:0] fifo_ram [0:15];
+    reg [4:0] wr_ptr, rd_ptr;
+    integer i;
+
+    wire       iteration = wr_ptr[4] ^ rd_ptr[4];
+    wire       ptr_equal = (wr_ptr[3:0] == rd_ptr[3:0]);
+
+    assign full  = (iteration & ptr_equal);
+    assign empty = (~iteration & ptr_equal);
+
+    // Combinational fill level (used internally)
+    wire [4:0] fill_level_comb = iteration ? (5'd16 + wr_ptr[3:0] - rd_ptr[3:0]) :
+                                             (wr_ptr[3:0] - rd_ptr[3:0]);
+
+    // Registered version for stable register read
+    reg  [4:0] fill_level;
+
+    // Configuration registers
+    reg [3:0]  af_level;
+    reg [3:0]  ae_level;
+    reg        clr_pulse;
+
+    assign almost_full  = (fill_level_comb >= {1'b0, af_level});
+    assign almost_empty = (fill_level_comb <= {1'b0, ae_level});
+
+    assign overflow  = full  && wr_enb && cs && (reg_sel == 0);
+    assign underflow = empty && rd_enb && cs && (reg_sel == 0);
+
+    //==================================================================
+    // Register Write Logic
+    //==================================================================
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            af_level  <= 4'd12;
+            ae_level  <= 4'd4;
+            clr_pulse <= 1'b0;
+            fill_level <= 5'd0;
+        end 
+        else if (cs) begin
+            if (clr_pulse) clr_pulse <= 1'b0;
+
+            // Sample fill_level every clock (for stable register read)
+            fill_level <= fill_level_comb;
+
+            if (reg_sel && wr_enb) begin
+                case (addr)
+                    8'h00: if (data_in[1]) clr_pulse <= 1'b1;
+                    8'h08: af_level <= data_in[3:0];
+                    8'h0C: ae_level <= data_in[3:0];
+                    default: ;
+                endcase
+            end
+        end
+    end
+
+    //==================================================================
+    // FIFO Data Path Logic
+    //==================================================================
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            wr_ptr   <= 5'b0;
+            rd_ptr   <= 5'b0;
+            data_out <= 8'h00;
+            for (i = 0; i < 16; i = i + 1)
+                fifo_ram[i] <= 8'b0;
+        end 
+        else if (cs && (reg_sel == 0)) begin
+            if (clr_pulse) begin
+                wr_ptr   <= 5'b0;
+                rd_ptr   <= 5'b0;
+                data_out <= 8'h00;
+                for (i = 0; i < 16; i = i + 1)
+                    fifo_ram[i] <= 8'b0;
+            end else begin
+                if (wr_enb && !full) begin
+                    fifo_ram[wr_ptr[3:0]] <= data_in;
+                    wr_ptr <= wr_ptr + 1'b1;
+                end
+
+                if (rd_enb && !empty) begin
+                    data_out <= fifo_ram[rd_ptr[3:0]];
+                    rd_ptr   <= rd_ptr + 1'b1;
+                end
+            end
+        end
+    end
+
+    //==================================================================
+    // Register Read Logic
+    //==================================================================
+    always @(*) begin
+        reg_rdata = 8'h00;
+        if (cs && reg_sel && rd_enb) begin
+            case (addr)
+                8'h00:   reg_rdata = 8'h00;
+                8'h04:   reg_rdata = {2'b00, underflow, overflow, 
+                                      almost_empty, almost_full, empty, full};
+                8'h08:   reg_rdata = {4'b0000, af_level};
+                8'h0C:   reg_rdata = {4'b0000, ae_level};
+                8'h10:   reg_rdata = empty ? 8'h00 : fifo_ram[rd_ptr[3:0]];
+                8'h14:   reg_rdata = {3'b000, fill_level};     // Now stable registered value
+                default: reg_rdata = 8'hDE;
+            endcase
+        end
+    end
+
+endmodule

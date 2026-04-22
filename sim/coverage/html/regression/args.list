@@ -1,0 +1,4 @@
+-html
+-htmldir
+coverage/html/regression
+coverage/ucdb/regression.ucdb
