@@ -1,0 +1,19 @@
+# Editor backup and temp files
+*~
+*.swp
+*.swo
+*.un~
+
+# Questa/ModelSim generated output under sim/
+sim/work/
+sim/covhtmlreport/
+sim/modelsim.*
+sim/transcript*
+sim/vlog.*
+sim/vsim.wlf
+sim/fifo_cov*
+sim/fcover*
+sim/vcover*
+sim/*.log
+sim/*.wlf
+sim/*.ucdb
